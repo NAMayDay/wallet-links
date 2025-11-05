@@ -1,4 +1,5 @@
 [
   { "name": "BTC", "address": "12BQtZWNuh4NVdG757kPQfD5aonbVB4okG" },
-  { "name": "ETH", "address": "0x4a68eA3EA4EEA7824995f8aA992F7445cc8D9129" }
+  { "name": "ETH", "address": "0x4a68eA3EA4EEA7824995f8aA992F7445cc8D9129" },
+  { "name": "USDT", "address": "123" }
 ]
