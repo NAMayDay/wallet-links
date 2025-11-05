@@ -89,8 +89,7 @@
         const cardNumber = data.CardInfo.Number;
 
         cardDiv.innerHTML = `
-          <h2>Card Info</h2>
-          <p>${data.CardInfo.Name}</p>
+          <h2>${data.CardInfo.Name}</h2>
           <p>${cardNumber}</p>
           <button id="copyCardBtn">Копировать</button>
         `;
