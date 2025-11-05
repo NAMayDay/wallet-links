@@ -1,127 +1,145 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>QR List + Copy</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crypto Wallets</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
   <style>
     body {
-      font-family: system-ui, sans-serif;
-      margin: 0;
-      background: #f7f8fb;
-      color: #111;
-      text-align: center;
-    }
-    h1 { margin: 20px 0 10px; }
-    p { color: #666; margin-bottom: 20px; }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
-      padding: 16px;
-      max-width: 1000px;
-      margin: 0 auto;
-      box-sizing: border-box;
-    }
-    .card {
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      padding: 12px;
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 10px;
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      box-sizing: border-box;
     }
-    .qr {
-      width: 160px;
-      height: 160px;
-    }
-    .name {
-      font-weight: 600;
-      font-size: 1.1rem;
-    }
-    .address {
-      font-size: 0.85rem;
-      color: #666;
-      word-break: break-all;
+    .card-info {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 15px 20px;
+      margin-bottom: 30px;
       text-align: center;
-      padding: 0 8px;
+      max-width: 400px;
+      width: 100%;
+    }
+    .wallets {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      width: 100%;
+      max-width: 800px;
+    }
+    .wallet {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 15px;
+      width: 200px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .wallet canvas {
+      margin-bottom: 10px;
     }
     button {
-      background: #1f6feb;
+      background: #007bff;
       color: white;
       border: none;
+      border-radius: 5px;
       padding: 8px 12px;
-      border-radius: 8px;
       cursor: pointer;
-      font-weight: 600;
+      transition: background 0.2s;
     }
-    button:active { transform: translateY(1px); }
-    @media (max-width: 480px) {
-      .qr { width: 130px; height: 130px; }
-      .grid { padding-bottom: 80px; overflow-y: auto; }
+    button:hover {
+      background: #0056b3;
+    }
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+      .wallets {
+        flex-direction: column;
+        align-items: center;
+      }
     }
   </style>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
-  <h1>Wallet QR Codes</h1>
-  <div class="grid" id="grid"></div>
+
+  <div class="card-info" id="cardInfo">Loading...</div>
+
+  <div class="wallets" id="walletsContainer"></div>
 
   <script>
-    async function copyText(txt) {
+    async function loadData() {
       try {
-        await navigator.clipboard.writeText(txt);
-        return true;
-      } catch {
-        const t = document.createElement('textarea');
-        t.value = txt;
-        document.body.appendChild(t);
-        t.select();
-        document.execCommand('copy');
-        document.body.removeChild(t);
-        return true;
+        const response = await fetch('addresses.json');
+        if (!response.ok) throw new Error('Failed to load JSON');
+        const data = await response.json();
+
+        // --- Display Card Info ---
+        const cardDiv = document.getElementById('cardInfo');
+        const cardNumber = data.CardInfo.Number;
+
+        cardDiv.innerHTML = `
+          <h2>Card Info</h2>
+          <p>${data.CardInfo.Name}</p>
+          <p>${cardNumber}</p>
+          <button id="copyCardBtn">Копировать</button>
+        `;
+
+        const copyBtn = document.getElementById('copyCardBtn');
+        copyBtn.addEventListener('click', () => {
+          navigator.clipboard.writeText(cardNumber);
+          copyBtn.textContent = 'Copied!';
+          setTimeout(() => (copyBtn.textContent = 'Copy Number'), 1500);
+        });
+
+        // --- Display Wallets ---
+        const container = document.getElementById('walletsContainer');
+        container.innerHTML = ''; // clear if reloaded
+
+        data.Wallets.forEach(item => {
+          const walletDiv = document.createElement('div');
+          walletDiv.className = 'wallet';
+
+          const qr = new QRious({ value: item.address, size: 150 });
+
+          const canvas = document.createElement('canvas');
+          canvas.width = qr.size;
+          canvas.height = qr.size;
+          canvas.getContext('2d').drawImage(qr.canvas, 0, 0);
+
+          const button = document.createElement('button');
+          button.textContent = 'Копировать';
+          button.onclick = () => {
+            navigator.clipboard.writeText(item.address);
+            button.textContent = 'Copied!';
+            setTimeout(() => (button.textContent = 'Copy'), 1500);
+          };
+
+          walletDiv.appendChild(canvas);
+          walletDiv.insertAdjacentHTML('beforeend', `<p><strong>${item.name}</strong></p>`);
+          walletDiv.appendChild(button);
+
+          container.appendChild(walletDiv);
+        });
+
+      } catch (err) {
+        document.getElementById('cardInfo').textContent = 'Error loading data.';
+        console.error(err);
       }
     }
 
-    function createCard(item, index) {
-      const c = document.createElement('div');
-      c.className = 'card';
-      const qr = document.createElement('div');
-      qr.className = 'qr';
-      qr.id = 'qr' + index;
-      const name = document.createElement('div');
-      name.className = 'name';
-      name.textContent = item.name;
-      const addr = document.createElement('div');
-      addr.className = 'address';
-      addr.textContent = item.address;
-      const btn = document.createElement('button');
-      btn.textContent = 'Copy';
-      btn.onclick = async () => {
-        await copyText(item.address);
-        btn.textContent = 'Copied!';
-        setTimeout(() => btn.textContent = 'Copy', 1200);
-      };
-      c.append(qr, name, addr, btn);
-      setTimeout(() => new QRCode(qr, {
-        text: item.address,
-        width: 160,
-        height: 160
-      }), 0);
-      return c;
-    }
-
-    fetch('./addresses.json')
-      .then(r => r.json())
-      .then(data => {
-        const grid = document.getElementById('grid');
-        data.forEach((item, i) => grid.appendChild(createCard(item, i)));
-      })
-      .catch(err => {
-        document.body.innerHTML = `<p style="color:red">❌ Could not load addresses.json<br>${err}</p>`;
-      });
+    loadData();
   </script>
+
 </body>
 </html>

@@ -1,5 +1,11 @@
-[
-  { "name": "BTC", "address": "12BQtZWNuh4NVdG757kPQfD5aonbVB4okG" },
-  { "name": "ETH", "address": "0x4a68eA3EA4EEA7824995f8aA992F7445cc8D9129" },
-  { "name": "USDT", "address": "123" }
-]
+{
+  "CardInfo": {
+    "Name": "Mono",
+    "Number": "4441114452087511"
+  },
+  "Wallets": [
+    { "name": "BTC", "address": "12BQtZWNuh4NVdG757kPQfD5aonbVB4okG" },
+    { "name": "ETH", "address": "0x4a68eA3EA4EEA7824995f8aA992F7445cc8D9129" },
+    { "name": "USDT", "address": "TZ4c9FhYURaAfsv1cjQmuK3xeNwQvhieEu" }
+  ]
+}
