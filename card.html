@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Card Information</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+    .card-info {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 15px 20px;
+      margin-bottom: 30px;
+      text-align: center;
+      max-width: 400px;
+      width: 100%;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 8px 12px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="card-info" id="cardInfo">Loading...</div>
+
+  <script>
+    async function loadData() {
+      try {
+        const response = await fetch('addresses.json');
+        if (!response.ok) throw new Error('Failed to load JSON');
+        const data = await response.json();
+
+        // Display Card Info
+        const cardDiv = document.getElementById('cardInfo');
+        const cardNumber = data.CardInfo.Number;
+
+        cardDiv.innerHTML = `
+          <h2>${data.CardInfo.Name}</h2>
+          <p>${cardNumber}</p>
+          <button id="copyCardBtn">Копировать</button>
+        `;
+
+        const copyBtn = document.getElementById('copyCardBtn');
+        copyBtn.addEventListener('click', () => {
+          navigator.clipboard.writeText(cardNumber);
+          copyBtn.textContent = 'Copied!';
+          setTimeout(() => (copyBtn.textContent = 'Copy Number'), 1500);
+        });
+
+      } catch (err) {
+        document.getElementById('cardInfo').textContent = 'Error loading data.';
+        console.error(err);
+      }
+    }
+
+    loadData();
+  </script>
+</body>
+</html>
