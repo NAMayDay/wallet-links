@@ -4,8 +4,8 @@
     "Number": "5169360026236210"
   },
   "Wallets": [
-    { "name": "BTC", "address": "12BQtZWNuh4NVdG757kPQfD5aonbVB4okG" },
-    { "name": "ETH", "address": "0x4a68eA3EA4EEA7824995f8aA992F7445cc8D9129" },
-    { "name": "USDT", "address": "TZ4c9FhYURaAfsv1cjQmuK3xeNwQvhieEu" }
+    { "name": "BTC", "address": "1HVks8WdgkWNGcM8j8znxR7oJczf9DY9oi" },
+    { "name": "ETH", "address": "0xD03527Bfc78046092656E21836B6E9144aCBe0CA" },
+    { "name": "USDT", "address": "THPpMiNe8QEpuR7vNXb1Gd9EBLGxeZoBP2" }
   ]
 }
